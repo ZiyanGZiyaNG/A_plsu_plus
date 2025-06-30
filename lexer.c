@@ -3,8 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 
-// 所有 Token 類型列舉
-typedef enum {
+typedef enum   // 所有類型 
+{
     TOKEN_INT_DECL,
     TOKEN_IDENT,
     TOKEN_ASSIGN,
@@ -18,25 +18,25 @@ typedef enum {
     TOKEN_EOF
 } TokenType;
 
-// Token 結構定義
-typedef struct {
+typedef struct // 結構定義
+{
     TokenType type;
     char value[64];
 } Token;
 
-// 原始碼指標
-const char* src;
+const char* src; // 指標
 int pos = 0;
 
-// 跳過空白
-void skip_whitespace() {
-    while (isspace(src[pos])) {
+void skip_whitespace() // 跳過空白
+{
+    while (isspace(src[pos])) 
+    {
         pos++;
     }
 }
 
-// 識別字或關鍵字
-Token make_identifier_or_keyword() {
+Token make_identifier_or_keyword() // 識別字或關鍵字
+{
     Token token;
     int start = pos;
     while (isalnum(src[pos]) || src[pos] == '_') pos++;
@@ -52,8 +52,8 @@ Token make_identifier_or_keyword() {
     return token;
 }
 
-// 整數
-Token make_number() {
+Token make_number() // 整數
+{
     Token token;
     token.type = TOKEN_NUMBER;
     int start = pos;
@@ -64,27 +64,31 @@ Token make_number() {
     return token;
 }
 
-// 詞法分析主體
-Token get_next_token() {
+Token get_next_token() // 分析
+{
     skip_whitespace();
     Token token;
     char c = src[pos];
 
-    if (c == '\0') {
+    if (c == '\0') 
+    {
         token.type = TOKEN_EOF;
         strcpy(token.value, "EOF");
         return token;
     }
 
-    if (isalpha(c)) {
+    if (isalpha(c)) 
+    {
         return make_identifier_or_keyword();
     }
 
-    if (isdigit(c)) {
+    if (isdigit(c)) 
+    {
         return make_number();
     }
 
-    switch (c) {
+    switch (c) 
+    {
         case '=':
             token.type = TOKEN_ASSIGN;
             strcpy(token.value, "=");
@@ -123,17 +127,4 @@ Token get_next_token() {
 
     pos++;
     return token;
-}
-
-// 主測試程式
-int main() {
-    src = "int x = 42 + 1 # this is comment";
-
-    Token token;
-    do {
-        token = get_next_token();
-        printf("Token: Type=%d, Value=%s\n", token.type, token.value);
-    } while (token.type != TOKEN_EOF);
-
-    return 0;
 }
